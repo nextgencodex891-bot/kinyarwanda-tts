@@ -25,4 +25,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: nextgencodex89/kinyarwanda-tts:py310
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/kinyarwanda-tts:py310
+            ${{ secrets.DOCKERHUB_USERNAME }}/kinyarwanda-tts:latest
