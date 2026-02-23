@@ -15,16 +15,19 @@ RUN apt-get update && apt-get install -y \
 RUN pip install torch==2.2.0 torchaudio==2.2.0 --extra-index-url https://download.pytorch.org/whl/cu118
 
 # Step 4: Install TTS (Coqui)
-RUN pip install TTS
+RUN pip install TTS soundfile datasets gradio
 
 # Step 5: Set working directory
 WORKDIR /workspace
 
-# Step 6: Copy your app code into the container
+# Step 6: Clone HuggingFace model repo
+RUN git clone https://huggingface.co/nextgencodex1/kinyarwanda-tts-model
+
+# Step 7: Copy your app code into the container
 COPY app.py .
 
-# Step 7: Expose the port your app runs on
+# Step 8: Expose the port your app runs on
 EXPOSE 7861
 
-# Step 8: Default command to run your app
+# Step 9: Default command to run your app
 CMD ["python", "app.py"]
