@@ -11,11 +11,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Step 3: Install CUDA + PyTorch (GPU support)
-# Adjust torch/torchaudio versions to match Kaggle GPU drivers
 RUN pip install torch==2.2.0 torchaudio==2.2.0 --extra-index-url https://download.pytorch.org/whl/cu118
 
-# Step 4: Install TTS (Coqui)
-RUN pip install TTS soundfile datasets gradio
+# Step 4: Install TTS (Coqui) + HuggingFace deps
+RUN pip install TTS soundfile datasets gradio huggingface_hub
 
 # Step 5: Set working directory
 WORKDIR /workspace
