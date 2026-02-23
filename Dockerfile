@@ -1,31 +1,32 @@
-# Step 1: Base image with Python 3.10
+# Base image
 FROM python:3.10-slim
 
-# Step 2: Install system dependencies
+# System dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    wget \
-    curl \
-    build-essential \
-    libsndfile1 \
+    git wget curl build-essential \
+    libsndfile1 ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Step 3: Install PyTorch (CPU or GPU)
-# For GPU builds, use the CUDA wheels. For CPU-only, drop the extra-index-url.
-RUN pip install torch==2.3.0 torchaudio==2.3.0 --extra-index-url https://download.pytorch.org/whl/cu118
+# Set working directory
+WORKDIR /workspace
 
-# Step 4: Install Python dependencies
+# Install PyTorch (CPU - change to cu118 URL for GPU)
+RUN pip install --no-cache-dir \
+    torch==2.3.0 torchaudio==2.3.0 \
+    --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Copy and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Step 5: Set working directory
-WORKDIR /workspace
-
-# Step 6: Copy your app code into the container
+# Copy app
 COPY app.py .
 
-# Step 7: Expose the port your app runs on
+# Cache directory for model files
+RUN mkdir -p /workspace/kinyarwanda-tts-model
+
+# Expose Gradio port
 EXPOSE 7861
 
-# Step 8: Default command to run your app
+# Run app
 CMD ["python", "app.py"]
