@@ -10,23 +10,22 @@ RUN apt-get update && apt-get install -y \
     libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Step 3: Install CUDA + PyTorch (GPU support)
-RUN pip install torch==2.2.0 torchaudio==2.2.0 --extra-index-url https://download.pytorch.org/whl/cu118
+# Step 3: Install PyTorch (CPU or GPU)
+# For GPU builds, use the CUDA wheels. For CPU-only, drop the extra-index-url.
+RUN pip install torch==2.3.0 torchaudio==2.3.0 --extra-index-url https://download.pytorch.org/whl/cu118
 
-# Step 4: Install TTS (Coqui) + HuggingFace deps
-RUN pip install TTS soundfile datasets gradio huggingface_hub
+# Step 4: Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Step 5: Set working directory
 WORKDIR /workspace
 
-# Step 6: Clone HuggingFace model repo
-RUN git clone https://huggingface.co/nextgencodex1/kinyarwanda-tts-model
-
-# Step 7: Copy your app code into the container
+# Step 6: Copy your app code into the container
 COPY app.py .
 
-# Step 8: Expose the port your app runs on
+# Step 7: Expose the port your app runs on
 EXPOSE 7861
 
-# Step 9: Default command to run your app
+# Step 8: Default command to run your app
 CMD ["python", "app.py"]
